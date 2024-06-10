@@ -1,6 +1,6 @@
 import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
 import {useFonts} from 'expo-font';
-import {Stack} from 'expo-router';
+import {Slot, Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {useEffect} from 'react';
 import 'react-native-reanimated';
@@ -31,10 +31,14 @@ export default function RootLayout() {
     return (
         <Provider store={store}> {/* 包裹整个应用 */}
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-                <Stack>
-                    <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-                    <Stack.Screen name="+not-found"/>
-                </Stack>
+                <Slot/> {/* 路由插槽 */}
+                {/*<Stack>*/}
+                {/*    <Stack.Screen name="(tabs)" options={{headerShown: false}}/>*/}
+                {/*    <Stack.Screen name="+not-found"/>*/}
+                {/*<Stack.Screen name="screens/login" options={{headerShown: false}}/>*/}
+                {/*<Stack.Screen name="screens/register" options={{headerShown: false}}/>*/}
+                {/*<Stack.Screen name="screens/personalInfo" options={{headerShown: false}}/>*/}
+                {/*</Stack>*/}
                 <TipMessage/> {/* 全局提示组件 */}
             </ThemeProvider>
         </Provider>
