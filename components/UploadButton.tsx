@@ -5,19 +5,8 @@ import * as DocumentPicker from 'expo-document-picker';
 import {useDispatch} from "react-redux";
 import {showTip} from "@/redux/store";
 
-
 /**
  * 上传按钮
- * @constructor
- */
-
-interface UploadButtonProps {
-    showTip: (message: string) => void;
-}
-
-/**
- * 上传按钮组件
- * @param showTip 显示提示信息的函数
  * @constructor
  */
 const UploadButton = () => {

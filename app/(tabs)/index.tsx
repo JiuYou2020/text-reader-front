@@ -4,7 +4,6 @@ import UploadButton from '@/components/UploadButton';
 import React from 'react';
 import {Animated, StyleSheet, View} from 'react-native';
 
-
 export default function HomeScreen() {
     const scrollY = new Animated.Value(0);
 
@@ -21,29 +20,13 @@ export default function HomeScreen() {
         extrapolate: 'clamp',
     });
 
-
     return (
         <View style={styles.container}>
-            {/* Animated.View 包装公告栏，设置高度和透明度动画 */}
             <Animated.View
                 style={[styles.announcementWrapper, {height: announcementHeight, opacity: announcementOpacity}]}>
                 <AnnouncementBar/>
             </Animated.View>
-            {/* Animated.ScrollView 监听滚动事件，将滚动位置更新到 scrollY 中 */}
-            <Animated.ScrollView
-                contentContainerStyle={styles.scrollViewContent}
-                onScroll={Animated.event(
-                    [{nativeEvent: {contentOffset: {y: scrollY}}}],
-                    {useNativeDriver: false}
-                )}
-                scrollEventThrottle={16}
-            >
-                {/* 书架内容 */}
-                <View style={styles.bookshelfContainer}>
-                    <Bookshelf/>
-                </View>
-            </Animated.ScrollView>
-            {/* 上传按钮 */}
+            <Bookshelf scrollY={scrollY}/>
             <UploadButton/>
         </View>
     );
@@ -52,7 +35,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     announcementWrapper: {
         position: 'absolute', // 绝对定位，使其在页面顶部

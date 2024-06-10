@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import * as ImagePicker from 'expo-image-picker'; // 正确导入 ImagePicker
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState, updateUser} from '@/redux/store';
+import {RootState, showTip, updateUser} from '@/redux/store';
 
 export default function PersonalInfo() {
     const user = useSelector((state: RootState) => state.user);
@@ -46,7 +46,7 @@ export default function PersonalInfo() {
         // 保存修改，发送请求到后端
         console.log('保存修改:', {accountId: user.accountId, username, password});
         dispatch(updateUser({username, password}));
-        alert('修改已保存');
+        dispatch(showTip('保存成功'));
     };
 
     const defaultImage = require('@/assets/images/avatar-placeholder.png');

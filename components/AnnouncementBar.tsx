@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Animated, StyleSheet, Text} from 'react-native';
+import {ActivityIndicator, Animated, ImageBackground, StyleSheet, Text, View} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import axios from 'axios';
 
 /**
  * 公告栏
@@ -8,14 +10,13 @@ import {ActivityIndicator, Animated, StyleSheet, Text} from 'react-native';
 const AnnouncementBar = () => {
     const [announcement, setAnnouncement] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-    const opacity = useState(new Animated.Value(1))[0]; // 使用 useState 创建一个 Animated.Value
+    const opacity = useState(new Animated.Value(1))[0];
 
     useEffect(() => {
         const fetchAnnouncement = async () => {
             try {
-                const response = await fetch('https://your-backend-api.com/announcement');
-                const data = await response.json();
-                setAnnouncement(data.message);
+                const response = await axios.get('https://your-backend-api.com/announcement');
+                setAnnouncement(response.data.message);
             } catch (error) {
                 console.error('Failed to fetch announcement:', error);
             } finally {
@@ -26,33 +27,48 @@ const AnnouncementBar = () => {
         fetchAnnouncement();
     }, []);
 
-    // 在组件加载时执行动画
     useEffect(() => {
         Animated.timing(opacity, {
-            toValue: 1, // 动画结束时的不透明度
-            duration: 500, // 动画持续时间
-            useNativeDriver: true, // 使用原生驱动
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true,
         }).start();
     }, [opacity]);
 
+    const truncatedAnnouncement = announcement && announcement.length > 100
+        ? `${announcement.substring(0, 100)}...`
+        : announcement;
+
     return (
         <Animated.View style={[styles.container, {opacity}]}>
-            {loading ? (
-                <ActivityIndicator size="large" color="#fff"/>
-            ) : (
-                <Text style={styles.text}>{announcement || '没有公告'}</Text>
-            )}
+            <ImageBackground
+                source={require('/home/code/React/project/txt-reader/assets/images/announce.jpg')} // 使用 require 引入本地图片
+                style={styles.background}
+                imageStyle={styles.backgroundImage}
+            >
+                <View style={styles.content}>
+                    <View style={styles.iconTextWrapper}>
+                        <Text style={styles.announcementText}>公告</Text>
+                        <Icon name="campaign" size={24} color="#0fcfe0"/>
+                    </View>
+                    {loading ? (
+                        <ActivityIndicator size="large" color="#fff"/>
+                    ) : (
+                        <Text style={styles.text}>{truncatedAnnouncement || '没有公告'}</Text>
+                    )}
+                </View>
+            </ImageBackground>
         </Animated.View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        height: '100%',
-        backgroundColor: '#79d5cf',
+        height: 200, // 设置公告栏的高度
+        width: '100%', // 确保公告栏宽度为100%
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
+        padding: 10,
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
         elevation: 4,
@@ -60,11 +76,40 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.3,
         shadowRadius: 3,
+        overflow: 'hidden',
+    },
+    background: {
+        flex: 1,
+        width: '100%',
+        justifyContent: 'center',
+    },
+    backgroundImage: {
+        width: '100%',
+        height: '100%',
+        opacity: 0.4,
+    },
+    content: {
+        flex: 1,
+        width: '100%',
+        padding: 10,
+    },
+    iconTextWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        position: 'absolute',
+        top: 10,
+        left: 10,
+    },
+    announcementText: {
+        fontSize: 24,
+        color: '#0fcfe0',
+        marginRight: 4,
     },
     text: {
         fontSize: 18,
-        color: '#fff',
+        color: '#000000',
         textAlign: 'center',
+        marginTop: 50, // 根据需要调整位置
     },
 });
 
