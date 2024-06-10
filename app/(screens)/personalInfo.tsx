@@ -1,12 +1,23 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import * as ImagePicker from 'expo-image-picker'; // 正确导入 ImagePicker
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState, updateUser} from '@/redux/store';
 
 export default function PersonalInfo() {
+    const user = useSelector((state: RootState) => state.user);
+    const dispatch = useDispatch();
+
     const [image, setImage] = useState<string | null>(null); // 用于存储头像的状态
-    const [accountId, setAccountId] = useState('123456'); // 账户ID状态
-    const [nickname, setNickname] = useState('John Doe'); // 昵称状态
-    const [password, setPassword] = useState('password'); // 密码状态
+    const [username, setUsername] = useState(user.username || ''); // 昵称状态
+    const [password, setPassword] = useState(user.password || ''); // 密码状态
+
+    useEffect(() => {
+        if (user.username) {
+            setUsername(user.username || '');
+            setPassword(user.password || '');
+        }
+    }, [user]);
 
     // 选择图片函数
     const pickImage = async () => {
@@ -33,7 +44,8 @@ export default function PersonalInfo() {
 
     const handleSave = () => {
         // 保存修改，发送请求到后端
-        console.log('保存修改:', {accountId, nickname, password});
+        console.log('保存修改:', {accountId: user.accountId, username, password});
+        dispatch(updateUser({username, password}));
         alert('修改已保存');
     };
 
@@ -45,14 +57,14 @@ export default function PersonalInfo() {
                 <Image source={image ? {uri: image} : defaultImage} style={styles.avatar}/>
             </TouchableOpacity>
             <View style={styles.infoContainer}>
-                <Text style={styles.row}>ID: {accountId}</Text>
+                <Text style={styles.row}>ID: {user.accountId}</Text>
                 <View style={styles.row}>
                     <Text style={styles.label}>昵称:</Text>
                     {/* 昵称输入框 */}
                     <TextInput
                         style={[styles.input, styles.underlineInput]}
-                        value={nickname}
-                        onChangeText={setNickname}
+                        value={username}
+                        onChangeText={setUsername}
                     />
                 </View>
                 <View style={styles.row}>
@@ -79,7 +91,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
-        paddingTop: 60, // 调整整体位置上移
+        paddingTop: 40, // 调整整体位置上移
         backgroundColor: '#f5f5f5',
     },
     avatar: {
@@ -101,9 +113,6 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     row: {
-        fontSize: 16,
-        color: '#333',
-        marginRight: 10,
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 15, // 调整行间距确保一致

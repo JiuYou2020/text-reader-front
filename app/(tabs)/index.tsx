@@ -2,7 +2,8 @@ import AnnouncementBar from '@/components/AnnouncementBar';
 import Bookshelf from '@/components/Bookshelf';
 import UploadButton from '@/components/UploadButton';
 import React from 'react';
-import {View, Animated, StyleSheet} from 'react-native';
+import {Animated, StyleSheet, View} from 'react-native';
+import TipMessage from "@/components/TipMessage";
 
 
 export default function HomeScreen() {

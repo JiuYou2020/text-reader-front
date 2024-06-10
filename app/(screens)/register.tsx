@@ -5,33 +5,35 @@ import {login} from '@/redux/store';
 import {useRouter} from 'expo-router';
 import axios from "axios";
 
-const LoginScreen = () => {
+const RegisterScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
     const router = useRouter();
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         try {
-            // 发送登录请求到后端
-            const response = await axios.post('https://your-backend-api.com/login', {
+            // 发送注册请求到后端
+            const response = await axios.post('https://your-backend-api.com/register', {
                 username,
                 password
             });
             if (response.status === 200) {
-                dispatch(login(username));
+                const {accountId} = response.data;
+                dispatch(login({username, accountId, password}));
+                router.replace('/personalInfo');
             } else {
-                alert('登录失败');
+                alert('注册失败');
             }
         } catch (error) {
-            console.error('登录失败', error);
-            alert('登录失败');
+            console.error('注册失败', error);
+            alert('注册失败');
         }
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>登录</Text>
+            <Text style={styles.title}>注册</Text>
             <TextInput
                 style={styles.input}
                 placeholder="用户名"
@@ -45,11 +47,11 @@ const LoginScreen = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>登录</Text>
+            <TouchableOpacity style={styles.button} onPress={handleRegister}>
+                <Text style={styles.buttonText}>注册</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.replace('/screens/register')}>
-                <Text style={styles.linkText}>没有账号？注册</Text>
+            <TouchableOpacity onPress={() => router.replace('/login')}>
+                <Text style={styles.linkText}>已有账号？登录</Text>
             </TouchableOpacity>
         </View>
     );
@@ -95,4 +97,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LoginScreen;
+export default RegisterScreen;

@@ -31,12 +31,20 @@ const tipSlice = createSlice({
 interface UserState {
     isLoggedIn: boolean;
     username: string | null;
+    accountId: string | null;
+    password: string | null;
 }
 
 // 用户状态的初始状态
 const initialUserState: UserState = {
+    // isLoggedIn: true,
+    // username: "张三",
+    // accountId: "1",
+    // password: "123456",
     isLoggedIn: false,
     username: null,
+    accountId: null,
+    password: null,
 };
 
 // 创建用户 slice
@@ -44,20 +52,32 @@ const userSlice = createSlice({
     name: 'user',
     initialState: initialUserState,
     reducers: {
-        login(state, action: PayloadAction<string>) {
+        login(state, action: PayloadAction<{
+            username: string,
+            accountId: string,
+            password: string
+        }>) {
             state.isLoggedIn = true;
-            state.username = action.payload;
+            state.username = action.payload.username;
+            state.accountId = action.payload.accountId;
+            state.password = action.payload.password;
         },
         logout(state) {
             state.isLoggedIn = false;
             state.username = null;
+            state.accountId = null;
+            state.password = null;
+        },
+        updateUser(state, action: PayloadAction<{ username: string, password: string }>) {
+            state.username = action.payload.username;
+            state.password = action.payload.password;
         },
     },
 });
 
 // 导出 actions 和 reducer
 export const {showTip, hideTip} = tipSlice.actions;
-export const {login, logout} = userSlice.actions;
+export const {login, logout, updateUser} = userSlice.actions;
 
 // 创建 Redux store
 const store = configureStore({
