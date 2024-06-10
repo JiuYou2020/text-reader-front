@@ -1,50 +1,148 @@
-# Welcome to your Expo app 👋
+### 项目目录结构文档
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+#### 1. 显示层
 
-## Get started
+##### 1.1 路由（Navigator）
 
-1. Install dependencies
+路由层负责管理应用内的所有页面（Screen），包括配置路由跳转规则、转场动画和 header 样式等。
 
-   ```bash
-   npm install
-   ```
+目录结构：
 
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+src/
+├── navigation/
+│   ├── AppNavigator.js
+│   └── AuthNavigator.js
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+**AppNavigator.js**: 配置主要应用内的所有路由和导航规则。
+**AuthNavigator.js**: 配置登录和注册等认证相关的路由。
 
-## Learn more
+##### 1.2 容器组件（Screen）
 
-To learn more about developing your project with Expo, look at the following resources:
+每个页面对应一个容器组件，负责管理页面内的数据和显示组件。对于简单项目，可以将控制层的功能合并到容器组件内；对于复杂项目，可以单独创建控制器文件管理数据和交互。
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+简单项目结构：
 
-## Join the community
+```
+src/
+├── screens/
+│   ├── HomeScreen.js
+│   ├── DetailScreen.js
+│   └── ProfileScreen.js
+```
 
-Join our community of developers creating universal apps.
+复杂项目结构：
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```
+src/
+├── screens/
+│   ├── HomeScreen/
+│   │   ├── HomeScreen.js
+│   │   └── HomeController.js
+│   ├── DetailScreen/
+│   │   ├── DetailScreen.js
+│   │   └── DetailController.js
+│   └── ProfileScreen/
+│       ├── ProfileScreen.js
+│       └── ProfileController.js
+```
+
+**HomeScreen.js**: 主页容器组件。
+**HomeController.js**: 主页控制器，处理数据和业务逻辑。
+
+##### 1.3 显示组件（View）
+
+显示组件只承担显示职责，不处理任何业务逻辑。这些组件在项目内会被高复用。在任何页面内，传递指定的数据格式即可实现复用。
+
+目录结构：
+
+```
+src/
+├── components/
+│   ├── Button.js
+│   ├── Header.js
+│   ├── ListItem.js
+│   └── Modal.js
+```
+
+**Button.js**: 按钮组件。
+**Header.js**: 头部组件。
+
+#### 2. 样式（Style）
+
+样式文件夹（或称 UI 文件夹）内的内容需要和项目团队内的 UI 设计师沟通设计规范后确定，记录了整个应用的设计规范。
+
+目录结构：
+
+```
+src/
+├── styles/
+│   ├── colors.js
+│   ├── typography.js
+│   └── layout.js
+```
+
+**colors.js**: 包含项目内使用的所有颜色，例如 primaryColor、bgColor 等。
+**typography.js**: 包含项目内使用的所有字体和字号。
+**layout.js**: 定义全局的布局规范和边距值。
+
+#### 3. 控制层（Controller）
+
+控制层的工作可以由容器组件承担，也可以交给单独的控制器文件来承担。主要负责给组件提供数据。
+
+目录结构（复杂项目）：
+
+```
+src/
+├── controllers/
+│   ├── HomeController.js
+│   ├── DetailController.js
+│   └── ProfileController.js
+```
+
+**HomeController.js**: 主页控制器。
+**DetailController.js**: 详情页控制器。
+
+控制层主要工作内容：
+
+1. 提供数据给组件。
+    - 组件调用控制器内的方法请求数据，控制器得到数据后返回给组件使用（推荐使用 async/await）。
+    - 组件关联 store，在组件内通知控制器发起数据请求，控制器得到数据后通过 dispatch 修改 store 内的数据，组件通过 Redux
+      机制获取数据。
+2. 数据来源：
+    - 网络请求。
+    - 原生模块数据（通过 bridge 与原生交互）。
+    - 组件请求时传递的参数，解析后返回。
+
+#### 4. 数据层（Data）
+
+负责提供项目的数据。
+
+目录结构：
+
+```
+src/
+├── api/
+│   ├── apiConfig.js
+│   └── apiEndpoints.js
+├── store/
+│   ├── index.js
+│   ├── rootReducer.js
+│   ├── actions/
+│   │   ├── authActions.js
+│   │   └── bookActions.js
+│   └── reducers/
+│       ├── authReducer.js
+│       └── bookReducer.js
+```
+
+**apiConfig.js**: 配置所有的 URL 信息，debug/release 对应的 URL 切换。
+**apiEndpoints.js**: 定义具体的网络请求实现。
+**store/index.js**: Redux store 配置。
+**actions/**: 定义所有的 Redux actions。
+**reducers/**: 定义所有的 Redux reducers。
+
+---
+
+以上是详细的项目目录结构文档，根据您的需求和项目复杂度进行相应的调整和扩展。
