@@ -1,19 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, Animated} from 'react-native';
-
-interface TipMessageProps {
-    message: string;
-    visible: boolean;
-}
+import React, {useEffect} from 'react';
+import {Animated, StyleSheet, Text} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {hideTip, RootState} from '@/redux/store';
 
 /**
  * 提示组件
- * @param message 提示内容
- * @param visible 是否可见
+ * message 提示内容
+ * visible 是否可见
  * @constructor
  */
-const TipMessage: React.FC<TipMessageProps> = ({message, visible}) => {
-    const [opacity] = useState(new Animated.Value(0));
+const TipMessage = () => {
+    const {message, visible} = useSelector((state: RootState) => state.tip);
+    const dispatch = useDispatch();
+    const [opacity] = React.useState(new Animated.Value(0));
 
     useEffect(() => {
         if (visible) {
@@ -29,10 +28,12 @@ const TipMessage: React.FC<TipMessageProps> = ({message, visible}) => {
                     duration: 4000, // 淡出持续时间
                     delay: 2000, // 延迟 2 秒开始淡出
                     useNativeDriver: true,
-                }).start();
+                }).start(() => {
+                    dispatch(hideTip()); // 动画结束后隐藏提示
+                });
             });
         }
-    }, [visible, opacity]);
+    }, [visible, opacity, dispatch]);
 
     if (!visible) return null;
 
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
         right: 0,
         marginHorizontal: 20,
         padding: 10,
-        backgroundColor: 'rgba(219,9,46,0.8)', // 浅蓝色透明背景
+        backgroundColor: 'rgba(249,48,77,0.8)', // 浅蓝色透明背景
         borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',

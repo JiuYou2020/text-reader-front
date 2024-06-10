@@ -1,6 +1,6 @@
-import AnnouncementBar from '../../components/AnnouncementBar';
-import Bookshelf from '../../components/Bookshelf';
-import UploadButton from '../../components/UploadButton';
+import AnnouncementBar from '@/components/AnnouncementBar';
+import Bookshelf from '@/components/Bookshelf';
+import UploadButton from '@/components/UploadButton';
 import React from 'react';
 import {View, Animated, StyleSheet} from 'react-native';
 

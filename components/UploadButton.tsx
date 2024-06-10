@@ -1,48 +1,46 @@
-import React, {useState} from 'react';
-import {TouchableOpacity, StyleSheet, View} from 'react-native';
+import React from 'react';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 import {AntDesign} from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import TipMessage from './TipMessage'; // 导入 TipMessage 组件
+import {useDispatch} from "react-redux";
+import {showTip} from "@/redux/store";
 
 
 /**
  * 上传按钮
  * @constructor
  */
+
+interface UploadButtonProps {
+    showTip: (message: string) => void;
+}
+
+/**
+ * 上传按钮组件
+ * @param showTip 显示提示信息的函数
+ * @constructor
+ */
 const UploadButton = () => {
-    const [tipVisible, setTipVisible] = useState(false);
-    const [tipMessage, setTipMessage] = useState('');
+    const dispatch = useDispatch();
 
-    const showTip = (message: string) => {
-        setTipMessage(message);
-        setTipVisible(true);
-        console.log('showTip' + message)
-        // 隐藏提示消息（重置状态），可以在提示完全消失后调用
-        setTimeout(() => {
-            setTipVisible(false);
-        }, 6000); // 6秒后重置
-    };
-
+    // 处理文件上传的函数
     const handleUpload = async () => {
         let result = await DocumentPicker.getDocumentAsync({
             type: 'text/plain',
         });
 
         if (result.canceled) {
-            showTip('取消上传');
+            dispatch(showTip('取消上传')); // 使用提示组件显示取消上传信息
         } else {
             // 上传本地书籍到后端并加载到书架上
-            showTip('上传成功');
+            dispatch(showTip('上传成功')); // 使用提示组件显示上传成功信息
         }
     };
 
     return (
-        <View>
-            <TipMessage message={tipMessage} visible={tipVisible}/>
-            <TouchableOpacity style={styles.button} onPress={handleUpload}>
-                <AntDesign name="plus" size={24} color="white"/>
-            </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.button} onPress={handleUpload}>
+            <AntDesign name="plus" size={24} color="white"/>
+        </TouchableOpacity>
     );
 };
 
@@ -51,7 +49,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 30,
         right: 30,
-        backgroundColor: '#0fcfe0',
+        backgroundColor: '#007bff',
         padding: 20,
         borderRadius: 50,
         justifyContent: 'center',

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator, Animated} from 'react-native';
+import {ActivityIndicator, Animated, StyleSheet, Text} from 'react-native';
 
 /**
  * 公告栏

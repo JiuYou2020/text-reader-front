@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, FlatList, StyleSheet, Text} from 'react-native';
+import {FlatList, StyleSheet, View} from 'react-native';
 import BookItem from './BookItem';
 import BookActionsDrawer from './BookActionsDrawer';
 import {Book} from '@/constants/types';
