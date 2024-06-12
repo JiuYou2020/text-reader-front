@@ -63,7 +63,7 @@ const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
     };
 
     const handleBookPress = (book: Book) => {
-        router.push({pathname: 'txtReader', params: {bookId: book.id}});
+        router.push({pathname: '/txtReader', params: {bookId: book.id}});
     }
 
 

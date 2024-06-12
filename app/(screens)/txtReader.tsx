@@ -1,9 +1,9 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {BackHandler, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useLocalSearchParams, useRouter} from "expo-router";
-import {useSelector} from "react-redux";
-import {RootState} from "@/redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState, updateReadingPosition} from "@/redux/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function Reader() {
     const {bookId} = useLocalSearchParams<{ bookId: string }>();
@@ -12,8 +12,9 @@ function Reader() {
     const scrollViewRef = useRef<ScrollView>(null);
     const books = useSelector((state: RootState) => state.book.books);
     const book = books.find((b) => b.id === bookId);
+    const dispatch = useDispatch();
+    const [position, setPosition] = useState<number>(0);
     const router = useRouter();
-
     if (!book) {
         throw new Error('Book not found');
     }
@@ -41,9 +42,25 @@ function Reader() {
         fetchContent();
     }, [book]);
 
+    const handleBackPress = useCallback(() => {
+        (async () => {
+            dispatch(updateReadingPosition({bookId: book.id, position}));
+            await AsyncStorage.setItem(book.id, JSON.stringify({
+                ...book,
+                lastReadPosition: position,
+            }));
+            router.back();
+        })();
+        return true;
+    }, [dispatch, book.id, position, router]);
+
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+        return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    }, [handleBackPress]);
+
     const handleScroll = async (event: any) => {
-        book.lastReadPosition = event.nativeEvent.contentOffset.y;
-        await AsyncStorage.setItem(book.id, JSON.stringify(book));
+        setPosition(event.nativeEvent.contentOffset.y);
     };
 
     return (
