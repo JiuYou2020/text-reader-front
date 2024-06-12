@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {BackHandler, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useLocalSearchParams, useRouter} from "expo-router";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState, updateReadingPosition} from "@/redux/store";
+import {RootState, showTip, updateReadingPosition} from "@/redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function Reader() {
@@ -10,13 +10,16 @@ function Reader() {
     const [content, setContent] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const scrollViewRef = useRef<ScrollView>(null);
+    const [position, setPosition] = useState<number>(0);
+    const dispatch = useDispatch();
+    const router = useRouter();
     const books = useSelector((state: RootState) => state.book.books);
     const book = books.find((b) => b.id === bookId);
-    const dispatch = useDispatch();
-    const [position, setPosition] = useState<number>(0);
-    const router = useRouter();
+
     if (!book) {
-        throw new Error('Book not found');
+        dispatch(showTip('未找到书籍'));
+        router.back();
+        return null;
     }
 
     useEffect(() => {
@@ -44,7 +47,8 @@ function Reader() {
 
     const handleBackPress = useCallback(() => {
         (async () => {
-            dispatch(updateReadingPosition({bookId: book.id, position}));
+            const savedPosition = position === 0 ? book.lastReadPosition || 0 : position;
+            dispatch(updateReadingPosition({bookId: book.id, position: savedPosition}));
             await AsyncStorage.setItem(book.id, JSON.stringify({
                 ...book,
                 lastReadPosition: position,

@@ -34,8 +34,9 @@ export default function RootLayout() {
                     <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
                     <Stack.Screen name="+not-found"/>
                     <Stack.Screen name="(screens)" options={{
-                        headerBackTitleVisible: false,
-                        headerTitle: '',
+                        // headerBackTitleVisible: false,
+                        // headerTitle: '',
+                        headerShown: false
                     }}/>
                 </Stack>
             </ThemeProvider>
