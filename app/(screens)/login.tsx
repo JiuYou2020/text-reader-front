@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Platform, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {login} from '@/redux/store';
 import {useRouter} from 'expo-router';
@@ -15,14 +15,14 @@ const LoginScreen = () => {
     const handleLogin = async () => {
         try {
             // 构建登录请求URL
-            const url = `https://7b65-218-12-15-35.ngrok-free.app/user/users/login?username=${username}&password=${password}`;
+            const url = `http://localhost:8080/user/users/login?username=${username}&password=${password}`;
             // 发送登录请求到后端
             const response = await axios.get(url);
             // 解析响应
             const {success, errCode, errMessage, data} = response.data;
 
             if (success) {
-                const userId: string = data;
+                const userId = data;
 
                 // 登录成功后更新 Redux 状态和 AsyncStorage
                 dispatch(login({username, accountId: userId, password}));
@@ -40,42 +40,63 @@ const LoginScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>登录</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="用户名"
-                value={username}
-                onChangeText={setUsername}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="密码"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>登录</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.replace('/register')}>
-                <Text style={styles.linkText}>没有账号？注册</Text>
-            </TouchableOpacity>
+        <View style={styles.outerContainer}>
+            <View style={styles.container}>
+                <Text style={styles.title}>登录</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="用户名"
+                    value={username}
+                    onChangeText={setUsername}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="密码"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                />
+                <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                    <Text style={styles.buttonText}>登录</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.replace('/register')}>
+                    <Text style={styles.linkText}>没有账号？注册</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    outerContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
         backgroundColor: '#f5f5f5',
     },
+    container: {
+        width: '100%',
+        maxWidth: 400,
+        padding: 20,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        ...Platform.select({
+            web: {
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+            },
+        }),
+    },
     title: {
         fontSize: 24,
         marginBottom: 20,
+        ...Platform.select({
+            web: {
+                color: '#00796b',
+                fontFamily: 'Arial, sans-serif',
+            },
+        }),
     },
     input: {
         width: '100%',
@@ -85,6 +106,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingHorizontal: 10,
         marginBottom: 10,
+        ...Platform.select({
+            web: {
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            },
+        }),
     },
     button: {
         width: '100%',
@@ -93,6 +119,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         marginBottom: 10,
+        ...Platform.select({
+            web: {
+                cursor: 'pointer',
+                transition: 'background-color 0.3s',
+            },
+        }),
     },
     buttonText: {
         color: 'white',
@@ -102,6 +134,11 @@ const styles = StyleSheet.create({
     linkText: {
         color: '#007bff',
         textDecorationLine: 'underline',
+        ...Platform.select({
+            web: {
+                cursor: 'pointer',
+            },
+        }),
     },
 });
 

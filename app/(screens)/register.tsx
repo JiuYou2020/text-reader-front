@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Platform, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import axios from "axios";
 
@@ -11,7 +11,7 @@ const RegisterScreen = () => {
     const handleRegister = async () => {
         try {
             console.log('Sending registration request');
-            const response = await axios.post('https://7b65-218-12-15-35.ngrok-free.app/user/users/register', {
+            const response = await axios.post('http://localhost:8080/user/users/register', {
                 username,
                 password
             }, {
@@ -37,44 +37,63 @@ const RegisterScreen = () => {
         }
     };
 
-
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>注册</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="用户名"
-                value={username}
-                onChangeText={setUsername}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="密码"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
-            <TouchableOpacity style={styles.button} onPress={handleRegister}>
-                <Text style={styles.buttonText}>注册</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.replace('/login')}>
-                <Text style={styles.linkText}>已有账号？登录</Text>
-            </TouchableOpacity>
+        <View style={styles.outerContainer}>
+            <View style={styles.container}>
+                <Text style={styles.title}>注册</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="用户名"
+                    value={username}
+                    onChangeText={setUsername}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="密码"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                />
+                <TouchableOpacity style={styles.button} onPress={handleRegister}>
+                    <Text style={styles.buttonText}>注册</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.replace('/login')}>
+                    <Text style={styles.linkText}>已有账号？登录</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    outerContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
         backgroundColor: '#f5f5f5',
     },
+    container: {
+        width: '100%',
+        maxWidth: 400,
+        padding: 20,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        ...Platform.select({
+            web: {
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+            },
+        }),
+    },
     title: {
         fontSize: 24,
         marginBottom: 20,
+        ...Platform.select({
+            web: {
+                color: '#00796b',
+                fontFamily: 'Arial, sans-serif',
+            },
+        }),
     },
     input: {
         width: '100%',
@@ -84,6 +103,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingHorizontal: 10,
         marginBottom: 10,
+        ...Platform.select({
+            web: {
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            },
+        }),
     },
     button: {
         width: '100%',
@@ -92,6 +116,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         marginBottom: 10,
+        ...Platform.select({
+            web: {
+                cursor: 'pointer',
+                transition: 'background-color 0.3s',
+            },
+        }),
     },
     buttonText: {
         color: 'white',
@@ -101,6 +131,11 @@ const styles = StyleSheet.create({
     linkText: {
         color: '#007bff',
         textDecorationLine: 'underline',
+        ...Platform.select({
+            web: {
+                cursor: 'pointer',
+            },
+        }),
     },
 });
 

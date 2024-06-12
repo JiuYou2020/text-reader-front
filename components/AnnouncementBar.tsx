@@ -15,7 +15,7 @@ const AnnouncementBar = () => {
     useEffect(() => {
         const fetchAnnouncement = async () => {
             try {
-                const response = await axios.get('https://7b65-218-12-15-35.ngrok-free.app/notification/announce', {timeout: 3000});
+                const response = await axios.get('http://localhost:8080/notification/announce', {timeout: 3000});
                 const announcement: string = response.data.data;
                 console.log('Fetched announcement:', announcement);
                 setAnnouncement(announcement);
@@ -66,8 +66,8 @@ const AnnouncementBar = () => {
 
 const styles = StyleSheet.create({
     container: {
-        height: 200, // 设置公告栏的高度
-        width: '100%', // 确保公告栏宽度为100%
+        height: "auto", // 设置公告栏的高度
+        width: 'auto', // 确保公告栏宽度为100%
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,

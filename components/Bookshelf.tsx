@@ -29,8 +29,11 @@ const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
                 stores.forEach((store) => {
                     const value = store[1];
                     if (value) {
-                        const book: Book = JSON.parse(value);
-                        localBooks.push(book);
+                        const book = JSON.parse(value);
+                        // 检查 book.id 和 book.name 是否为空
+                        if (book.id && book.name) {
+                            localBooks.push(book);
+                        }
                     }
                 });
 
@@ -53,6 +56,7 @@ const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
 
         loadBooks();
     }, [books, dispatch]);
+
     const router = useRouter();
     const handleBookIconPress = (book: Book) => {
         setSelectedBook(book);

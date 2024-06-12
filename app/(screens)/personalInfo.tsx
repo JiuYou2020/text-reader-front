@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import * as ImagePicker from 'expo-image-picker'; // 正确导入 ImagePicker
 import {useDispatch, useSelector} from 'react-redux';
 import {login, RootState, showTip, updateUser} from '@/redux/store';
@@ -23,7 +23,7 @@ export default function PersonalInfo() {
             setUserId(user.accountId || '');
         } else {
             console.log('用户未登录1');
-            //从本地存储中获取用户信息
+            // 从本地存储中获取用户信息
             AsyncStorage.getItem('user').then((data) => {
                 if (data) {
                     const {username, accountId, password} = JSON.parse(data);
@@ -73,54 +73,66 @@ export default function PersonalInfo() {
 
     const defaultImage = require('@/assets/images/avatar-placeholder.png');
     return (
-        <View style={styles.container}>
-            {/* 点击头像上传修改 */}
-            <TouchableOpacity onPress={pickImage}>
-                <Image source={image ? {uri: image} : defaultImage} style={styles.avatar}/>
-            </TouchableOpacity>
-            <View style={styles.infoContainer}>
-                <Text style={styles.row}>ID: {userId}</Text>
-                <View style={styles.row}>
-                    <Text style={styles.label}>昵称:</Text>
-                    {/* 昵称输入框 */}
-                    <TextInput
-                        style={[styles.input, styles.underlineInput]}
-                        value={username}
-                        onChangeText={setUsername}
-                    />
-                </View>
-                <View style={styles.row}>
-                    <Text style={styles.label}>密码:</Text>
-                    {/* 密码输入框 */}
-                    <TextInput
-                        style={[styles.input, styles.underlineInput]}
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                    />
-                </View>
-                <TouchableOpacity style={styles.button} onPress={handleSave}>
-                    <Text style={styles.buttonText}>保存修改</Text>
+        <View style={styles.outerContainer}>
+            <View style={styles.container}>
+                {/* 点击头像上传修改 */}
+                <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
+                    <Image source={image ? {uri: image} : defaultImage} style={styles.avatar}/>
                 </TouchableOpacity>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.row}>ID: {userId}</Text>
+                    <View style={styles.row}>
+                        <Text style={styles.label}>昵称:</Text>
+                        {/* 昵称输入框 */}
+                        <TextInput
+                            style={[styles.input, styles.underlineInput]}
+                            value={username}
+                            onChangeText={setUsername}
+                        />
+                    </View>
+                    <View style={styles.row}>
+                        <Text style={styles.label}>密码:</Text>
+                        {/* 密码输入框 */}
+                        <TextInput
+                            style={[styles.input, styles.underlineInput]}
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={handleSave}>
+                        <Text style={styles.buttonText}>保存修改</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    outerContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
         paddingTop: 40, // 调整整体位置上移
-        backgroundColor: '#f5f5f5',
+    },
+    container: {
+        width: '100%',
+        maxWidth: 400,
+        padding: 20,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+    },
+    avatarContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
     },
     avatar: {
         width: 120,
         height: 120,
         borderRadius: 60,
-        marginBottom: 20,
         backgroundColor: '#e1e1e1',
     },
     infoContainer: {
@@ -128,11 +140,6 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#fff',
         borderRadius: 10,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
     },
     row: {
         flexDirection: 'row',
@@ -163,6 +170,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#007bff',
         borderRadius: 5,
         alignItems: 'center',
+        ...Platform.select({
+            web: {
+                cursor: 'pointer',
+                transition: 'background-color 0.3s',
+            },
+        }),
     },
     buttonText: {
         color: 'white',
