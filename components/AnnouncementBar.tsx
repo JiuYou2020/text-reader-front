@@ -15,7 +15,7 @@ const AnnouncementBar = () => {
     useEffect(() => {
         const fetchAnnouncement = async () => {
             try {
-                const response = await axios.get('https://your-backend-api.com/announcement');
+                const response = await axios.get('https://your-backend-api.com/announcement', {timeout: 3000});
                 setAnnouncement(response.data.message);
             } catch (error) {
                 console.error('Failed to fetch announcement:', error);

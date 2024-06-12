@@ -6,6 +6,7 @@ import {Book} from '@/constants/Book';
 import {useDispatch, useSelector} from "react-redux";
 import {addBook, RootState, showTip} from "@/redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useRouter} from "expo-router";
 
 /**
  * 书架
@@ -52,14 +53,19 @@ const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
 
         loadBooks();
     }, [books, dispatch]);
-
-    const handleBookPress = (book: Book) => {
+    const router = useRouter();
+    const handleBookIconPress = (book: Book) => {
         setSelectedBook(book);
     };
 
     const closeDrawer = () => {
         setSelectedBook(null);
     };
+
+    const handleBookPress = (book: Book) => {
+        router.push({pathname: 'txtReader', params: {bookId: book.id}});
+    }
+
 
     return (
         <View style={styles.container}>
@@ -75,7 +81,7 @@ const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
                 <Animated.FlatList
                     data={books}
                     renderItem={({item}) => (
-                        <BookItem book={item} onPress={handleBookPress}/>
+                        <BookItem book={item} onPress={handleBookPress} onPressIcon={handleBookIconPress}/>
                     )}
                     keyExtractor={(item) => item.id}
                     onScroll={Animated.event(

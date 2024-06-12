@@ -150,7 +150,6 @@ const bookSlice = createSlice({
             state.books = state.books.filter((book) => book.id !== action.payload);
         },
 
-
     },
 });
 

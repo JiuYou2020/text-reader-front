@@ -39,7 +39,6 @@ export default function RootLayout() {
                     }}/>
                 </Stack>
             </ThemeProvider>
-            {/*<TipMessage/> /!* 全局提示组件 *!/*/}
         </Provider>
     );
 }
