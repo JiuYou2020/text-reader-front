@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
-import {Book} from "@/constants/types";
+import {Book} from "@/constants/Book";
 
 interface BookItemProps {
     book: Book;

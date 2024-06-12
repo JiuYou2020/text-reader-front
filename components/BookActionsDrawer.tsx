@@ -1,6 +1,6 @@
 import React from 'react';
 import {Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
-import {Book} from "@/constants/types";
+import {Book} from "@/constants/Book";
 
 interface BookActionsDrawerProps {
     book: Book;

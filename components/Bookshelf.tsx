@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Animated, StyleSheet, View} from 'react-native';
 import BookItem from './BookItem';
 import BookActionsDrawer from './BookActionsDrawer';
-import {Book} from '@/constants/types';
+import {Book} from '@/constants/Book';
 
 /**
  * 书架
