@@ -1,6 +1,9 @@
 import React from 'react';
 import {Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import {Book} from "@/constants/Book";
+import {useDispatch} from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {removeBook, showTip} from "@/redux/store";
 
 interface BookActionsDrawerProps {
     book: Book;
@@ -14,14 +17,28 @@ interface BookActionsDrawerProps {
  * @constructor
  */
 const BookActionsDrawer: React.FC<BookActionsDrawerProps> = ({book, onClose}) => {
+    const dispatch = useDispatch();
     // 处理上传书籍到网络的函数
     const handleUpload = () => {
         // 上传书籍到网络
     };
 
     // 处理从书架删除书籍的函数
-    const handleDelete = () => {
-        // 从书架删除书籍
+    const handleDelete = async () => {
+        // 从书架删除书籍，同时从store中和本地存储中删除，todo
+        try {
+            // 从 Redux store 中删除书籍
+            dispatch(removeBook(book.id));
+            // 从本地存储中删除书籍
+            await AsyncStorage.removeItem(book.id);
+            // 显示提示
+            dispatch(showTip('删除书籍成功'));
+            // 关闭抽屉
+            onClose();
+        } catch (error) {
+            console.error('删除书籍失败', error);
+            dispatch(showTip('删除书籍失败'));
+        }
     };
 
     return (
