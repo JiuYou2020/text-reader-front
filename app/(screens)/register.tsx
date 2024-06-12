@@ -1,35 +1,42 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {useDispatch} from 'react-redux';
-import {login} from '@/redux/store';
 import {useRouter} from 'expo-router';
 import axios from "axios";
 
 const RegisterScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const dispatch = useDispatch();
     const router = useRouter();
 
     const handleRegister = async () => {
         try {
-            // 发送注册请求到后端
-            const response = await axios.post('https://your-backend-api.com/register', {
+            console.log('Sending registration request');
+            const response = await axios.post('https://7b65-218-12-15-35.ngrok-free.app/user/users/register', {
                 username,
                 password
+            }, {
+                headers: {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json'
+                }
             });
-            if (response.status === 200) {
-                const {accountId} = response.data;
-                dispatch(login({username, accountId, password}));
-                router.replace('/personalInfo');
+
+            console.log('Response received', response);
+
+            const {success, errCode, errMessage} = response.data;
+
+            if (success) {
+                router.replace('/login');
+                alert("注册成功");
             } else {
-                alert('注册失败');
+                alert(`注册失败: ${errMessage} (错误代码: ${errCode})`);
             }
         } catch (error) {
             console.error('注册失败', error);
             alert('注册失败');
         }
     };
+
 
     return (
         <View style={styles.container}>

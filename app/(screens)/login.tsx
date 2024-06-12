@@ -4,6 +4,7 @@ import {useDispatch} from 'react-redux';
 import {login} from '@/redux/store';
 import {useRouter} from 'expo-router';
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = () => {
     const [username, setUsername] = useState('');
@@ -13,18 +14,24 @@ const LoginScreen = () => {
 
     const handleLogin = async () => {
         try {
+            // 构建登录请求URL
+            const url = `https://7b65-218-12-15-35.ngrok-free.app/user/users/login?username=${username}&password=${password}`;
             // 发送登录请求到后端
-            const response = await axios.post('https://your-backend-api.com/login', {
-                username,
-                password
-            });
-            alert("登录成功：" + response.status + " " + response.data)
-            if (response.status === 200) {
-                const {accountId} = response.data; // 假设后端返回的数据包含这些字段
-                dispatch(login({username, accountId, password}));
-                router.replace('/personalInfo'); // 登录成功后导航到个人信息页面
+            const response = await axios.get(url);
+            // 解析响应
+            const {success, errCode, errMessage, data} = response.data;
+
+            if (success) {
+                const userId: string = data;
+
+                // 登录成功后更新 Redux 状态和 AsyncStorage
+                dispatch(login({username, accountId: userId, password}));
+                await AsyncStorage.setItem('user', JSON.stringify({username, accountId: userId, password}));
+
+                // 登录成功后导航到个人信息页面
+                router.replace('/personalInfo');
             } else {
-                alert('登录失败');
+                alert(`登录失败: ${errMessage} (错误代码: ${errCode})`);
             }
         } catch (error) {
             console.error('登录失败', error);

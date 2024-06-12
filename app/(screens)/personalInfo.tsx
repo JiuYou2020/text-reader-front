@@ -2,20 +2,42 @@ import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import * as ImagePicker from 'expo-image-picker'; // 正确导入 ImagePicker
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState, showTip, updateUser} from '@/redux/store';
+import {login, RootState, showTip, updateUser} from '@/redux/store';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useRouter} from "expo-router";
 
 export default function PersonalInfo() {
     const user = useSelector((state: RootState) => state.user);
     const dispatch = useDispatch();
-
+    const router = useRouter();
     const [image, setImage] = useState<string | null>(null); // 用于存储头像的状态
     const [username, setUsername] = useState(user.username || ''); // 昵称状态
     const [password, setPassword] = useState(user.password || ''); // 密码状态
+    const [userId, setUserId] = useState(user.accountId || ''); // 用户ID状态
 
     useEffect(() => {
-        if (user.username) {
+        if (user.accountId) {
+            console.log('用户已登录');
             setUsername(user.username || '');
             setPassword(user.password || '');
+            setUserId(user.accountId || '');
+        } else {
+            console.log('用户未登录1');
+            //从本地存储中获取用户信息
+            AsyncStorage.getItem('user').then((data) => {
+                if (data) {
+                    const {username, accountId, password} = JSON.parse(data);
+                    setUsername(username);
+                    setPassword(password);
+                    setUserId(accountId);
+                }
+            });
+            if (!user.accountId) {
+                console.log('用户已登录2');
+                router.replace("/my");
+                return;
+            }
+            dispatch(login({username, accountId: userId, password}));
         }
     }, [user]);
 
@@ -57,7 +79,7 @@ export default function PersonalInfo() {
                 <Image source={image ? {uri: image} : defaultImage} style={styles.avatar}/>
             </TouchableOpacity>
             <View style={styles.infoContainer}>
-                <Text style={styles.row}>ID: {user.accountId}</Text>
+                <Text style={styles.row}>ID: {userId}</Text>
                 <View style={styles.row}>
                     <Text style={styles.label}>昵称:</Text>
                     {/* 昵称输入框 */}

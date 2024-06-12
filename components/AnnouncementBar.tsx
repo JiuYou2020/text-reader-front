@@ -15,8 +15,10 @@ const AnnouncementBar = () => {
     useEffect(() => {
         const fetchAnnouncement = async () => {
             try {
-                const response = await axios.get('https://your-backend-api.com/announcement', {timeout: 3000});
-                setAnnouncement(response.data.message);
+                const response = await axios.get('https://7b65-218-12-15-35.ngrok-free.app/notification/announce', {timeout: 3000});
+                const announcement: string = response.data.data;
+                console.log('Fetched announcement:', announcement);
+                setAnnouncement(announcement);
             } catch (error) {
                 console.error('Failed to fetch announcement:', error);
             } finally {
