@@ -12,19 +12,19 @@ const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
     const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
     const books: Book[] = [
-        {id: '1', title: 'Book 1'},
-        {id: '2', title: 'Book 2'},
-        {id: '3', title: 'Book 3'},
-        {id: '4', title: 'Book 4'},
-        {id: '5', title: 'Book 5'},
-        {id: '6', title: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
-        {id: '7', title: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
-        {id: '8', title: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
-        {id: '9', title: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
-        {id: '10', title: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
-        {id: '11', title: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
-        {id: '12', title: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
-        {id: '13', title: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
+        {id: '1', name: 'Book 1'},
+        {id: '2', name: 'Book 2'},
+        {id: '3', name: 'Book 3'},
+        {id: '4', name: 'Book 4'},
+        {id: '5', name: 'Book 5'},
+        {id: '6', name: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
+        {id: '7', name: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
+        {id: '8', name: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
+        {id: '9', name: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
+        {id: '10', name: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
+        {id: '11', name: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
+        {id: '12', name: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
+        {id: '13', name: '恋爱在精神病院', description: '恋爱在精神病院最新作品'},
         // 更多书籍
     ];
 

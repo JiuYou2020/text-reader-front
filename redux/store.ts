@@ -1,5 +1,8 @@
 import {configureStore, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {Book} from "@/constants/Book";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+//===========================提示===========================
 // 定义提示状态类型
 interface TipState {
     message: string;
@@ -26,7 +29,7 @@ const tipSlice = createSlice({
         },
     },
 });
-
+//===========================用户状态===========================
 // 定义用户状态类型
 interface UserState {
     isLoggedIn: boolean;
@@ -75,15 +78,54 @@ const userSlice = createSlice({
     },
 });
 
+//===========================书籍===========================
+interface BooksState {
+    books: Book[];
+}
+
+const initialBooksState: BooksState = {
+    books: [],
+};
+
+const booksSlice = createSlice({
+    name: 'books',
+    initialState: initialBooksState,
+    reducers: {
+        addBook(state, action: PayloadAction<Book>) {
+            state.books.push(action.payload);
+        },
+        loadBooks(state, action: PayloadAction<Book[]>) {
+            state.books = action.payload;
+        },
+        updateReadingPosition(state, action: PayloadAction<{ bookId: string; position: number }>) {
+            const book = state.books.find((b) => b.id === action.payload.bookId);
+            if (book) {
+                book.lastReadPosition = action.payload.position;
+            }
+        },
+    },
+});
+// 加载持久化的书籍信息
+const loadPersistedBooks = async () => {
+    const keys = await AsyncStorage.getAllKeys();
+    const bookKeys = keys.filter(key => key.startsWith('book-'));
+    const books = await AsyncStorage.multiGet(bookKeys);
+    const parsedBooks = books.map(([key, value]) => JSON.parse(value ?? "{}")); // 使用默认值
+    store.dispatch(loadBooks(parsedBooks));
+};
+loadPersistedBooks();
+
 // 导出 actions 和 reducer
 export const {showTip, hideTip} = tipSlice.actions;
 export const {login, logout, updateUser} = userSlice.actions;
+export const {addBook, loadBooks, updateReadingPosition} = booksSlice.actions;
 
 // 创建 Redux store
 const store = configureStore({
     reducer: {
         tip: tipSlice.reducer,
         user: userSlice.reducer,
+        books: booksSlice.reducer,
     },
 });
 

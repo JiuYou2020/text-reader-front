@@ -21,7 +21,7 @@ const BookItem: React.FC<BookItemProps> = ({book, onPress}) => {
     return (
         <View style={styles.container}>
             <View style={styles.textContainer}>
-                <Text style={styles.title}>{book.title}</Text>
+                <Text style={styles.title}>{book.name}</Text>
                 <Text style={styles.description}>
                     {description.length > 20 ? `${description.substring(0, 20)}...` : description}
                 </Text>

@@ -2,8 +2,9 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity} from 'react-native';
 import {AntDesign} from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import {useDispatch} from "react-redux";
-import {showTip} from "@/redux/store";
+import {useDispatch} from 'react-redux';
+import {addBook, showTip} from '@/redux/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /**
  * 上传按钮
@@ -12,17 +13,29 @@ import {showTip} from "@/redux/store";
 const UploadButton = () => {
     const dispatch = useDispatch();
 
-    // 处理文件上传的函数
     const handleUpload = async () => {
         let result = await DocumentPicker.getDocumentAsync({
             type: 'text/plain',
         });
 
         if (result.canceled) {
-            dispatch(showTip('取消上传')); // 使用提示组件显示取消上传信息
+            dispatch(showTip('取消上传'));
         } else {
-            // 上传本地书籍到后端并加载到书架上
-            dispatch(showTip('上传成功')); // 使用提示组件显示上传成功信息
+            const {uri, name, size} = result.assets[0];
+
+            const book = {
+                id: Date.now().toString(),
+                name,
+                size,
+                syncedToCloud: false,
+                lastReadPosition: 0,
+                localUri: uri,
+            };
+
+            // 保存书籍信息到本地存储
+            await AsyncStorage.setItem(book.id, JSON.stringify(book));
+            dispatch(addBook(book));
+            dispatch(showTip('上传成功'));
         }
     };
 

@@ -32,7 +32,7 @@ const BookActionsDrawer: React.FC<BookActionsDrawerProps> = ({book, onClose}) =>
                     {/* 防止点击抽屉内部时关闭抽屉 */}
                     <TouchableWithoutFeedback>
                         <View style={styles.container}>
-                            <Text style={styles.title}>{book.title}</Text>
+                            <Text style={styles.title}>{book.name}</Text>
                             <Text style={styles.description}>
                                 {book.description || '没有简介'}
                             </Text>
