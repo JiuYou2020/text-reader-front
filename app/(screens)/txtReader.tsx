@@ -4,6 +4,7 @@ import {useLocalSearchParams, useRouter} from "expo-router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState, showTip, updateReadingPosition} from "@/redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {StatusBar} from "expo-status-bar";
 
 function Reader() {
     const {bookId} = useLocalSearchParams<{ bookId: string }>();
@@ -72,15 +73,18 @@ function Reader() {
             {loading ? (
                 <Text style={styles.loadingText}>加载中...</Text>
             ) : (
-                <ScrollView
-                    ref={scrollViewRef}
-                    style={styles.scrollView}
-                    onScrollEndDrag={handleScroll}
-                    onMomentumScrollEnd={handleScroll}
-                    scrollEventThrottle={16}
-                >
-                    <Text style={styles.contentText}>{content}</Text>
-                </ScrollView>
+                <>
+                    <StatusBar style="auto" backgroundColor={styles.container.backgroundColor}/>
+                    <ScrollView
+                        ref={scrollViewRef}
+                        style={styles.scrollView}
+                        onScrollEndDrag={handleScroll}
+                        onMomentumScrollEnd={handleScroll}
+                        scrollEventThrottle={16}
+                    >
+                        <Text style={styles.contentText}>{content}</Text>
+                    </ScrollView>
+                </>
             )}
         </View>
     );
@@ -91,17 +95,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5',
-    },
-    closeButton: {
-        padding: 10,
-        backgroundColor: '#007AFF',
-        borderRadius: 5,
-        margin: 10,
-        alignSelf: 'flex-end',
-    },
-    closeButtonText: {
-        color: '#fff',
-        fontSize: 16,
     },
     loadingText: {
         textAlign: 'center',
