@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {BackHandler, Platform, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useLocalSearchParams, useRouter} from "expo-router";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState, showTip, updateReadingPosition} from "@/redux/store";
+import {RootState, updateReadingPosition} from "@/redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {StatusBar} from "expo-status-bar";
 import Paragraph from "@/components/Paragraph";
@@ -16,39 +16,52 @@ function Reader() {
     const dispatch = useDispatch();
     const router = useRouter();
     const books = useSelector((state: RootState) => state.book.books);
-    const book = books.find((b) => b.id === bookId);
-
-    if (!book) {
-        dispatch(showTip('未找到书籍'));
-        router.back();
-        return null;
-    }
+    let book = books.find((b) => b.id === bookId);
 
     useEffect(() => {
-        const fetchContent = async () => {
+        const fetchBookFromStorage = async () => {
             try {
-                // 从store.js中获取书籍信息
-                const response = await fetch(book.localUri || '');
-                const text = await response.text();
-                setContent(text);
-
-                // 定位到上次阅读的位置
-                const lastReadPosition = book.lastReadPosition || 0;
-                setTimeout(() => {
-                    scrollViewRef.current?.scrollTo({y: lastReadPosition, animated: false});
-                }, 100);
+                const storedBook = await AsyncStorage.getItem(typeof bookId === "string" ? bookId : '');
+                if (storedBook) {
+                    book = JSON.parse(storedBook);
+                }
             } catch (error) {
-                console.error('Failed to load book content:', error);
-            } finally {
-                setLoading(false);
+                console.error('Failed to load book from storage:', error);
             }
         };
 
-        fetchContent();
-    }, [book]);
+        if (!book) {
+            fetchBookFromStorage().then(() => {
+                if (book) {
+                    fetchContent();
+                }
+            });
+        } else {
+            fetchContent();
+        }
+    }, [bookId]);
+
+    const fetchContent = async () => {
+        try {
+            if (!book) return;
+            const response = await fetch(book.localUri || '');
+            const text = await response.text();
+            setContent(text);
+
+            const lastReadPosition = book.lastReadPosition || 0;
+            setTimeout(() => {
+                scrollViewRef.current?.scrollTo({y: lastReadPosition, animated: false});
+            }, 100);
+        } catch (error) {
+            console.error('Failed to load book content:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleBackPress = useCallback(() => {
         (async () => {
+            if (!book) return;
             const savedPosition = position === 0 ? book.lastReadPosition || 0 : position;
             dispatch(updateReadingPosition({bookId: book.id, position: savedPosition}));
             await AsyncStorage.setItem(book.id, JSON.stringify({
@@ -58,7 +71,7 @@ function Reader() {
             router.back();
         })();
         return true;
-    }, [dispatch, book.id, position, router]);
+    }, [dispatch, book, position, router]);
 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', handleBackPress);
@@ -78,7 +91,6 @@ function Reader() {
     };
 
     const isWeb = Platform.OS === 'web';
-
 
     return (
         <View style={isWeb ? styles.webContainer : styles.container}>
