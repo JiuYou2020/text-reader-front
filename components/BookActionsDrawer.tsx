@@ -1,9 +1,10 @@
 import React from 'react';
-import {Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import {Book} from "@/constants/Book";
 import {useDispatch} from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {removeBook, showTip} from "@/redux/store";
+import styles from "@/styles/components/bookActionsDrawer";
 
 interface BookActionsDrawerProps {
     book: Book;
@@ -16,8 +17,9 @@ interface BookActionsDrawerProps {
  * @param onClose 关闭事件
  * @constructor
  */
-const BookActionsDrawer: React.FC<BookActionsDrawerProps> = ({book, onClose}) => {
+function BookActionsDrawer({book, onClose}: BookActionsDrawerProps) {
     const dispatch = useDispatch();
+
     // 处理上传书籍到网络的函数
     const handleUpload = () => {
         // 上传书籍到网络
@@ -25,7 +27,6 @@ const BookActionsDrawer: React.FC<BookActionsDrawerProps> = ({book, onClose}) =>
 
     // 处理从书架删除书籍的函数
     const handleDelete = async () => {
-        // 从书架删除书籍，同时从store中和本地存储中删除，todo
         try {
             // 从 Redux store 中删除书籍
             dispatch(removeBook(book.id));
@@ -65,7 +66,7 @@ const BookActionsDrawer: React.FC<BookActionsDrawerProps> = ({book, onClose}) =>
             </TouchableWithoutFeedback>
         </Modal>
     );
-};
+}
 
 /**
  * 操作按钮组件
@@ -73,52 +74,12 @@ const BookActionsDrawer: React.FC<BookActionsDrawerProps> = ({book, onClose}) =>
  * @param text 按钮显示文本
  * @constructor
  */
-const ActionButton: React.FC<{ onPress: () => void; text: string }> = ({onPress, text}) => (
-    <TouchableOpacity onPress={onPress} style={styles.button}>
-        <Text style={styles.buttonText}>{text}</Text>
-    </TouchableOpacity>
-);
-
-const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'flex-end',
-    },
-    container: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-    },
-    title: {
-        fontSize: 18,
-        marginBottom: 10,
-        fontWeight: 'bold',
-    },
-    description: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 20,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-    },
-    button: {
-        padding: 10,
-        marginVertical: 5,
-        marginHorizontal: 5,
-        backgroundColor: '#007bff',
-        borderRadius: 5,
-        flexBasis: '45%', // 两个按钮并排显示
-    },
-    buttonText: {
-        color: 'white',
-        textAlign: 'center',
-        fontWeight: 'bold',
-    },
-});
+function ActionButton({onPress, text}: { onPress: () => void; text: string }) {
+    return (
+        <TouchableOpacity onPress={onPress} style={styles.button}>
+            <Text style={styles.buttonText}>{text}</Text>
+        </TouchableOpacity>
+    );
+}
 
 export default BookActionsDrawer;

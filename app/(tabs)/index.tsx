@@ -1,10 +1,11 @@
 import AnnouncementBar from '@/components/AnnouncementBar';
-import Bookshelf from '@/components/Bookshelf';
+import BookShelf from '@/components/BookShelf';
 import UploadButton from '@/components/UploadButton';
 import React from 'react';
-import {Animated, StyleSheet, View} from 'react-native';
+import {Animated, View} from 'react-native';
+import styles from "@/styles/app/index";
 
-export default function HomeScreen() {
+function HomeScreen() {
     const scrollY = new Animated.Value(0);
 
     // 使用 interpolate 方法将 scrollY 转换为公告栏的高度和透明度值
@@ -15,7 +16,7 @@ export default function HomeScreen() {
     });
 
     const announcementOpacity = scrollY.interpolate({
-        inputRange: [0, 100],
+        inputRange: [0, 200],
         outputRange: [1, 0],
         extrapolate: 'clamp',
     });
@@ -26,30 +27,10 @@ export default function HomeScreen() {
                 style={[styles.announcementWrapper, {height: announcementHeight, opacity: announcementOpacity}]}>
                 <AnnouncementBar/>
             </Animated.View>
-            <Bookshelf scrollY={scrollY}/>
+            <BookShelf scrollY={scrollY}/>
             <UploadButton/>
         </View>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    announcementWrapper: {
-        position: 'absolute', // 绝对定位，使其在页面顶部
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1,
-        overflow: 'hidden', // 隐藏超出部分
-    },
-    scrollViewContent: {
-        paddingTop: 200, // 与公告栏初始高度一致
-    },
-    bookshelfContainer: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-});
+export default HomeScreen;

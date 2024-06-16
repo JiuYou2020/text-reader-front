@@ -1,16 +1,17 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import {AntDesign} from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import {useDispatch} from 'react-redux';
 import {addBook, showTip} from '@/redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from "@/styles/components/uploadButton";
 
 /**
  * 上传按钮
  * @constructor
  */
-const UploadButton = () => {
+function UploadButton() {
     const dispatch = useDispatch();
 
     const handleUpload = async () => {
@@ -44,19 +45,6 @@ const UploadButton = () => {
             <AntDesign name="plus" size={24} color="white"/>
         </TouchableOpacity>
     );
-};
-
-const styles = StyleSheet.create({
-    button: {
-        position: 'absolute',
-        bottom: 30,
-        right: 30,
-        backgroundColor: '#007bff',
-        padding: 20,
-        borderRadius: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-});
+}
 
 export default UploadButton;

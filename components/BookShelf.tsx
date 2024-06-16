@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Animated, StyleSheet, Text, View} from 'react-native';
+import {Animated, Text, View} from 'react-native';
 import BookItem from './BookItem';
 import BookActionsDrawer from './BookActionsDrawer';
 import {Book} from '@/constants/Book';
@@ -7,16 +7,16 @@ import {useDispatch, useSelector} from "react-redux";
 import {addBook, RootState, showTip} from "@/redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useRouter} from "expo-router";
+import styles from "@/styles/components/bookShelf";
 
 /**
  * 书架
  * @constructor
  */
-const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
+function BookShelf({scrollY}: { scrollY: Animated.Value }) {
     const [selectedBook, setSelectedBook] = useState<Book | null>(null);
     const dispatch = useDispatch();
     const books = useSelector((state: RootState) => state.book.books);
-    //先从store.js中获取书籍信息,如果没有，则从AsyncStorage中获取
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -30,7 +30,6 @@ const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
                     const value = store[1];
                     if (value) {
                         const book = JSON.parse(value);
-                        // 检查 book.id 和 book.name 是否为空
                         if (book.id && book.name) {
                             localBooks.push(book);
                         }
@@ -48,7 +47,7 @@ const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
                     }
                 });
             } catch (e) {
-                dispatch(showTip('加载书籍失败'))
+                dispatch(showTip('加载书籍失败'));
             } finally {
                 setIsLoading(false);
             }
@@ -69,7 +68,6 @@ const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
     const handleBookPress = (book: Book) => {
         router.push({pathname: '/txtReader', params: {bookId: book.id}});
     }
-
 
     return (
         <View style={styles.container}>
@@ -99,34 +97,6 @@ const Bookshelf = ({scrollY}: { scrollY: Animated.Value }) => {
             {selectedBook && <BookActionsDrawer book={selectedBook} onClose={closeDrawer}/>}
         </View>
     );
-};
+}
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    scrollViewContent: {
-        paddingTop: 200, // 与公告栏初始高度一致
-    },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    loadingText: {
-        fontSize: 18,
-        color: '#999',
-    },
-    emptyContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    emptyText: {
-        fontSize: 18,
-        color: '#999',
-    },
-});
-
-export default Bookshelf;
+export default BookShelf;
