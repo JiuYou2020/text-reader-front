@@ -4,7 +4,6 @@ import React from 'react';
 import {TabBarIcon} from '@/components/navigation/TabBarIcon';
 import {Colors} from '@/constants/Colors';
 import {useColorScheme} from '@/hooks/useColorScheme';
-import TipMessage from "@/components/TipMessage";
 
 export default function TabLayout() {
     // 获取当前的颜色方案（浅色或深色）
@@ -12,7 +11,6 @@ export default function TabLayout() {
 
     return (
         <>
-            <TipMessage/>
             <Tabs
                 screenOptions={{
                     // 设置活动标签的颜色
