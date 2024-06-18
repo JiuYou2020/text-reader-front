@@ -5,8 +5,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState, updateReadingPosition} from "@/redux/store";
 import {StatusBar} from "expo-status-bar";
 import Paragraph from "@/components/Paragraph";
-import {fetchBookFromStorage, saveBookToStorage} from "@/utils/bookStorage";
-import {Book} from "@/constants/Book";
 import styles from "@/styles/app/txtReader";
 
 function ReaderPage() {
@@ -18,7 +16,7 @@ function ReaderPage() {
     const dispatch = useDispatch();
     const router = useRouter();
     const books = useSelector((state: RootState) => state.book.books);
-    const [book, setBook] = useState<Book | null>(books.find((b) => b.id === bookId) || null);
+    const book = books.find((b) => b.id === bookId);
 
     const isWeb = Platform.OS === 'web';
 
@@ -27,7 +25,6 @@ function ReaderPage() {
             if (!book) return;
             const savedPosition = position === 0 ? book.lastReadPosition || 0 : position;
             dispatch(updateReadingPosition({bookId: book.id, position: savedPosition}));
-            await saveBookToStorage({...book, lastReadPosition: position});
             router.back();
         })();
         return true;
@@ -44,18 +41,6 @@ function ReaderPage() {
                 <Paragraph key={index} text={paragraph.trim()}/>
             ));
     };
-
-    useEffect(() => {
-        const initializeBook = async () => {
-            if (!book) {
-                const storedBook = await fetchBookFromStorage(typeof bookId === "string" ? bookId : '');
-                if (storedBook) {
-                    setBook(storedBook);
-                }
-            }
-        };
-        initializeBook();
-    }, [book, bookId]);
 
     useEffect(() => {
         const fetchContent = async () => {

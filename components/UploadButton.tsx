@@ -4,7 +4,6 @@ import {AntDesign} from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import {useDispatch} from 'react-redux';
 import {addBook, showTip} from '@/redux/store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from "@/styles/components/uploadButton";
 
 /**
@@ -26,15 +25,15 @@ function UploadButton() {
 
             const book = {
                 id: Date.now().toString(),
-                name,
-                size,
+                name: name,
+                description: '',
+                size: size !== undefined ? size : 0,
                 syncedToCloud: false,
                 lastReadPosition: 0,
                 localUri: uri,
             };
 
             // 保存书籍信息到本地存储
-            await AsyncStorage.setItem(book.id, JSON.stringify(book));
             dispatch(addBook(book));
             dispatch(showTip('上传成功'));
         }
