@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "txt-reader",
+    "name": "やりたいこと最·優·先！",
     "slug": "txt-reader",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -31,7 +31,6 @@
       "expo-router"
     ],
     "experiments": {
-      "typedRoutes": true
     },
     "extra": {
       "router": {
