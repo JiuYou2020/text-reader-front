@@ -1,7 +1,15 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
+// 定义用户状态类型
+interface UserState {
+    isLoggedIn: boolean;
+    username: string;
+    accountId: string;
+    password: string;
+}
+
 // 用户状态的初始状态
-const initialState = {
+const initialUserState: UserState = {
     isLoggedIn: false,
     username: "",
     accountId: "",
@@ -10,8 +18,8 @@ const initialState = {
 
 // 创建用户 slice
 const userSlice = createSlice({
-    name: 'user',
-    initialState,
+    name: 'users',
+    initialState: initialUserState,
     reducers: {
         login(state, action: PayloadAction<{
             username: string,
