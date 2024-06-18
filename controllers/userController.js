@@ -2,7 +2,6 @@ import {useDispatch} from "react-redux";
 import {useRouter} from "expo-router";
 import {loginUser, registerUser} from "@/api/apiEndpoints";
 import {login, showTip} from "@/redux/store";
-import {setItem} from "@/utils/asyncStorageService";
 
 export const useLogin = () => {
     const dispatch = useDispatch();
@@ -11,10 +10,8 @@ export const useLogin = () => {
     const handleLogin = async (username, password) => {
         const {success, errCode, errMessage, data} = await loginUser(username, password);
         if (success) {
-            const userId = data;
             // 登录成功后更新 Redux 状态和 AsyncStorage
-            dispatch(login({username, accountId: userId, password}));
-            await setItem('user', {username, accountId: userId, password})
+            dispatch(login({username, accountId: data, password}));
             router.replace('/my');
         } else {
             dispatch(showTip('登录失败：' + errMessage))

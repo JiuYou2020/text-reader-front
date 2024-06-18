@@ -2,8 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import * as ImagePicker from 'expo-image-picker'; // 正确导入 ImagePicker
 import {useDispatch, useSelector} from 'react-redux';
-import {login, RootState, showTip, updateUser} from '@/redux/store';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {RootState, showTip, updateUser} from '@/redux/store';
 import {useRouter} from "expo-router";
 import styles from "@/styles/app/personInfo";
 
@@ -17,28 +16,13 @@ function PersonalInfoPage() {
     const [userId, setUserId] = useState(user.accountId || ''); // 用户ID状态
 
     useEffect(() => {
-        if (user.accountId) {
+        if (user.isLoggedIn) {
             console.log('用户已登录');
             setUsername(user.username || '');
             setPassword(user.password || '');
             setUserId(user.accountId || '');
         } else {
-            console.log('用户未登录1');
-            // 从本地存储中获取用户信息
-            AsyncStorage.getItem('user').then((data) => {
-                if (data) {
-                    const {username, accountId, password} = JSON.parse(data);
-                    setUsername(username);
-                    setPassword(password);
-                    setUserId(accountId);
-                }
-            });
-            if (!user.accountId) {
-                console.log('用户已登录2');
-                router.replace("/my");
-                return;
-            }
-            dispatch(login({username, accountId: userId, password}));
+            router.replace("/my");
         }
     }, [user]);
 
@@ -63,10 +47,11 @@ function PersonalInfoPage() {
         if (!result.canceled) {
             setImage(result.assets[0].uri); // 设置选择的图片URI
         }
+        // todo 上传图片到服务器
     };
 
     const handleSave = () => {
-        // 保存修改，发送请求到后端
+        // todo 保存修改，发送请求到后端
         console.log('保存修改:', {accountId: user.accountId, username, password});
         dispatch(updateUser({username, password}));
         dispatch(showTip('保存成功'));
