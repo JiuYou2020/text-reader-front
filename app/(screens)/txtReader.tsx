@@ -72,17 +72,17 @@ function ReaderPage() {
     }, [handleBackPress]);
 
     return (
-        <View style={isWeb ? styles.webContainer : styles.container}>
+        <View style={styles.container}>
             {loading ? (
                 <Text style={styles.loadingText}>加载中...</Text>
             ) : (
                 <>
                     <StatusBar style="auto" backgroundColor={styles.container.backgroundColor}/>
-                    <View style={isWeb ? styles.webScrollViewContainer : styles.scrollViewContainer}>
+                    <View style={styles.scrollViewContainer}>
                         <ScrollView
                             ref={scrollViewRef}
-                            style={isWeb ? styles.webScrollView : styles.scrollView}
-                            contentContainerStyle={isWeb ? styles.webContentContainer : undefined}
+                            style={styles.scrollView}
+                            contentContainerStyle={styles.contentContainer}
                             onScrollEndDrag={handleScroll}
                             onMomentumScrollEnd={handleScroll}
                             scrollEventThrottle={16}
